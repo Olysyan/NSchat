@@ -4,27 +4,13 @@
 #include <future>
 #include <iostream>
 
-using namespace std::literals::chrono_literals;
-
 BREEP_DECLARE_TYPE(std::string)
-
-void co_listener(breep::tcp::network &network, const breep::tcp::peer &source) {
-  std::string message;
-  std::cout << "Enter message to send>> ";
-  std::cin >> message;
-  network.send_object_to(source, message);
-}
-
-void data_listener(breep::tcp::netdata_wrapper<std::string> &dw) {
-  std::cout << dw.data << std::endl;
-  dw.network.disconnect();
-}
 
 struct name {
 	name() : name_() {}
 
 	name(const std::string& val)
- : name_(val)
+			: name_(val)
 	{}
 
 	std::string name_;
@@ -62,30 +48,23 @@ private:
 	std::unordered_map<boost::uuids::uuid, std::string,  boost::hash<boost::uuids::uuid>> m_nicknames;
 };
 
-int main() {
-  int number;
-  std::cout << "Enter the number of people>> ";
-  std::cin >> number;
+int main(int argc, char* argv[]) {
+	if (argc != 2 && argc != 4) {
+		std::cerr<< "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]\n";
+		return 1;
+	}
 
-  int arr[number];
+	std::string nick;
+	std::cout << "Enter your nickname: ";
+	std::getline(std::cin, nick);
 
-    for (int i = 0; i < number; i++)
-    {
-    arr[i]=i+1234;  
-	breep::tcp::network network(arr[i]);
-    }
-  std::string nick;
-  std::cout << "Enter your nickname: ";
-  std::getline(std::cin, nick);
- 
- 
-  chat_manager chat(nick);
+	chat_manager chat(nick);
 
- 
+	breep::tcp::network network(std::atoi(argv[1]));
+
 	network.add_data_listener<name>([&chat](breep::tcp::netdata_wrapper<name>& dw) -> void {
 		chat.name_received(dw);
 	});
-
 	network.add_data_listener<std::string>([&chat](breep::tcp::netdata_wrapper<std::string>& dw) -> void {
 		chat.message_received(dw);
 	});
@@ -98,7 +77,7 @@ int main() {
 		chat.connection_event(net, peer);
 	});
 
-	if (number == 2) {
+	if (argc == 2) {
 		network.awake();
 	} else {
 		if(!network.connect(boost::asio::ip::address::from_string(argv[2]), std::atoi(argv[3]))) {
@@ -113,6 +92,7 @@ int main() {
 		network.send_object(message);
 		std::getline(std::cin, message);
 	}
+
 	network.disconnect();
 	return 0;
 }
