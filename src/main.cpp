@@ -76,20 +76,23 @@ int main(int argc, char* argv[]) {
 	network.add_disconnection_listener([&chat](breep::tcp::network& net, const breep::tcp::peer& peer) -> void {
 		chat.connection_event(net, peer);
 	});
-
-	if (argc == 2) {
+	//if (argc == 2) {
 		network.awake();
-	} else {
-		if(!network.connect(boost::asio::ip::address::from_string(argv[2]), std::atoi(argv[3]))) {
-			std::cerr << "Connection failed.\n";
-			return 1;
-		}
-	}
+	//} else {
+	//	if(!network.connect(boost::asio::ip::address::from_string(argv[2]), std::atoi(argv[3]))) {
+	//		std::cerr << "Connection failed.\n";
+	//		return 1;
+	//	}
+	//	else{
+	//		network.awake();}
+	//}
 
 	std::string message;
+	std::cout<<"Введите сообщение: ";
 	std::getline(std::cin, message);
 	while (message != "/q") {
 		network.send_object(message);
+		std::cout<<"Введите сообщение: ";
 		std::getline(std::cin, message);
 	}
 
