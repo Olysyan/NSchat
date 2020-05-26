@@ -25,7 +25,7 @@ public:
 			: m_name(name)
 			, m_nicknames()
 	{}
-
+	
 	void connection_event(breep::tcp::network& network, const breep::tcp::peer& peer) {
 		if (peer.is_connected()) {
 			network.send_object_to(peer, m_name);
@@ -86,16 +86,22 @@ int main(int argc, char* argv[]) {
 	//	else{
 	//		network.awake();}
 	//}
-
 	std::string message;
+
 	std::cout<<"Введите сообщение: ";
+	
 	std::getline(std::cin, message);
+	
 	while (message != "/q") {
+	
 		network.send_object(message);
+	
 		std::cout<<"Введите сообщение: ";
+	
 		std::getline(std::cin, message);
 	}
-
+	
 	network.disconnect();
+	
 	return 0;
 }
