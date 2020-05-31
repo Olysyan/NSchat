@@ -1,7 +1,5 @@
 #include <breep/network/tcp.hpp>
 #include <breep/util/serialization.hpp>
-<<<<<<< HEAD
-
 #include <string>
 #include <iostream>
 //123
@@ -14,8 +12,6 @@ public:
 	explicit square(int height): m_height(height), m_width(2 * height) {}
 	square(int height, int width): m_height(height), m_width(width) {}
 
-=======
-
 #include <string>
 #include <iostream>
 
@@ -28,7 +24,7 @@ public:
 	explicit square(int height): m_height(height), m_width(2 * height) {}
 	square(int height, int width): m_height(height), m_width(width) {}
 
->>>>>>> fix
+
 	int height() const {
 		return m_height;
 	}
