@@ -3,8 +3,8 @@
 
 #include <string>
 #include <iostream>
-
-
+//123
+BREEP_DECLARE_TYPE(std::string)
 /* This class will be sent through the network */
 class square {
 public:
