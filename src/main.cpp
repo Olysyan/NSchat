@@ -52,17 +52,14 @@ private:
 	BREEP_ENABLE_SERIALIZATION(chat_message<T>, m_message)
 };
 
-
 /* This class will be sent to each newly connected peer, so that he can know our name. */
 struct name {
 
 	/* Default constructor is required by serialization. */
 	name() : value{} {}
 	explicit name(const std::string& name_) : value(name_) {}
-
 	std::string value;
 };
-
 
 // Writing the serialization operators manually this time (just to demonstrate how to do this)
 breep::serializer& operator<<(breep::serializer& s, const name& local_name) {
@@ -231,6 +228,7 @@ int main(int argc, char* argv[]) {
 	std::cin.ignore();
 	std::string ans;
 	while(true) {
+		std::cout << "Enter mess: ";
 		std::getline(std::cin, ans);
 		if (ans[0] == '/') {
 			if (ans == "/q") {
