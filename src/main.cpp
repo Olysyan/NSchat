@@ -1,5 +1,6 @@
 #include <breep/network/tcp.hpp>
 #include <breep/util/serialization.hpp>
+<<<<<<< HEAD
 
 #include <string>
 #include <iostream>
@@ -13,6 +14,21 @@ public:
 	explicit square(int height): m_height(height), m_width(2 * height) {}
 	square(int height, int width): m_height(height), m_width(width) {}
 
+=======
+
+#include <string>
+#include <iostream>
+
+
+/* This class will be sent through the network */
+class square {
+public:
+	/* Default constructor is required by serialization. */
+	square(): m_height(0), m_width(0) {}
+	explicit square(int height): m_height(height), m_width(2 * height) {}
+	square(int height, int width): m_height(height), m_width(width) {}
+
+>>>>>>> fix
 	int height() const {
 		return m_height;
 	}
