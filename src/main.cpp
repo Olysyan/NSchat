@@ -1,5 +1,8 @@
 #include <breep/network/tcp.hpp>
 #include <breep/util/serialization.hpp>
+#include <nana/gui.hpp>
+#include <nana/gui/widgets/label.hpp>
+
 
 #include <string>
 #include <iostream>
@@ -187,6 +190,21 @@ private:
 
 int main(int argc, char* argv[]) {
 
+		using namespace nana;
+
+
+
+
+
+
+	
+	form fm;
+	label lb{  fm, rectangle{  10 , 10 , 100 , 100  }  };
+ 	lb.caption("Hello, world!");
+	fm.show( );
+	exec();
+
+
 	if (argc != 2 && argc != 4) {
 		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
 		return 1;
@@ -200,7 +218,7 @@ int main(int argc, char* argv[]) {
 	breep::tcp::network network(static_cast<unsigned short>(std::atoi(argv[1])));
 
 	// Disabling all logs (set to 'warning' by default).
-	network.set_log_level(breep::log_level::none);
+	network.set_log_level(breep::log_level::trace);
 
 	chat_room cr(name);
 	cr.start_listening(network);
@@ -218,7 +236,8 @@ int main(int argc, char* argv[]) {
 	} else {
 		// let's try to connect to a buddy at address argv[2] and port argv[3]
 		boost::asio::ip::address address = boost::asio::ip::address::from_string(argv[2]);
-		if(!network.connect(address, static_cast<unsigned short>(atoi(argv[3])))) {
+		auto val =static_cast<unsigned short>(atoi(argv[3])); 
+        if(!network.connect(address, val)) { 
 			// oh noes, it failed!
 			std::cout << "Connection failed." << std::endl;
 			return 1;

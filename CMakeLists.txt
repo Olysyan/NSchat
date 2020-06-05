@@ -14,4 +14,5 @@ set_project_warnings(default)
 enable_testing()
 
 add_subdirectory(external/breep)
+add_subdirectory(external/nana)
 add_subdirectory(src)
