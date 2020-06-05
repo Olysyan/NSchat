@@ -190,21 +190,6 @@ private:
 
 int main(int argc, char* argv[]) {
 
-		using namespace nana;
-
-
-
-
-
-
-	
-	form fm;
-	label lb{  fm, rectangle{  10 , 10 , 100 , 100  }  };
- 	lb.caption("Hello, world!");
-	fm.show( );
-	exec();
-
-
 	if (argc != 2 && argc != 4) {
 		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
 		return 1;
@@ -218,7 +203,7 @@ int main(int argc, char* argv[]) {
 	breep::tcp::network network(static_cast<unsigned short>(std::atoi(argv[1])));
 
 	// Disabling all logs (set to 'warning' by default).
-	network.set_log_level(breep::log_level::trace);
+	network.set_log_level(breep::log_level::none);
 
 	chat_room cr(name);
 	cr.start_listening(network);
@@ -249,6 +234,16 @@ int main(int argc, char* argv[]) {
 	while(true) {
 		std::cout << "Enter mess: ";
 		std::getline(std::cin, ans);
+		using namespace nana;
+	
+		form fm;
+		label lb{  fm, rectangle{  10 , 10 , 100 , 100  }  };
+		lb.caption(ans);
+ 	
+		fm.show( );
+
+		exec();
+
 		if (ans[0] == '/') {
 			if (ans == "/q") {
 				// Good bye !
