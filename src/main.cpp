@@ -191,41 +191,6 @@ private:
 
 int main(int argc, char* argv[]) {
 
-	  using namespace nana;
-
-  //Define a form.
-	  form fm;
-
-  //Define a label and display a text.
-  	label lab{ fm, "Hello, <bold blue size=16>Nana C++ Library</>" };
- 	 label lab2{ fm, "!" };
- 	 lab.format(true);
-
-  //Define a button and answer the click event.
- 	 button btn{ fm, "Quit" };
- 	 btn.events().click([&fm] {
-// network.disconnect();
-	 fm.close();
-  	});
-
-	  textbox tbox{fm, true};
-
-  //Layout management
-  	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
- 	 fm["text"] << lab << lab2;
-	  fm["button"] << btn;
-	  fm["box"] << tbox;
- 	 fm.collocate();
-	tbox.events().text_changed([&] (arg_textbox const& ev) {
-    auto& w = ev.widget;
-    auto pos = w.caret_pos();
-     });
-
-  //Show the form
- 	 fm.show();
-
-  //Start to event loop process, it blocks until the form is closed.
- 	 exec();
 
 	
     
@@ -247,7 +212,7 @@ int main(int argc, char* argv[]) {
 
 	chat_room cr(name);
 	cr.start_listening(network);
-
+    
 	// If we receive a class for which we don't have any listener (such as an int, for example), this will be called.
 	network.set_unlistened_type_listener([](breep::tcp::network&,const breep::tcp::peer&,breep::deserializer&,bool,uint64_t) -> void {
 		std::cout << "Unlistened class received." << std::endl;
@@ -270,7 +235,49 @@ int main(int argc, char* argv[]) {
 	}
 
 	std::cin.ignore();
-	std::string ans;
+		  using namespace nana;
+
+  //Define a form.
+	  form fm;
+  
+  //Define a label and display a text.
+  	label lab{ fm, "Hello, <bold blue size=16>NS!</>" };
+ 	 label lab2{ fm, "Enter mess: " };
+ 	 lab.format(true);
+
+  //Define a button and answer the click event.
+ 	 button btn_quit{ fm, "Quit" };
+ 	 btn_quit.events().click([&fm] {
+// network.disconnect();
+	 fm.close();
+  	});
+	button btn_send{ fm, "send" };
+	 std::string ans;
+ 	 //btn_send.events(ans).click([&fm] {
+// network.disconnect();
+	//network.send_object(chat_message<std::string>(ans));
+
+  //	});
+	  textbox tbox{fm, true};
+
+  //Layout management
+  	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+ 	 fm["text"] << lab << lab2;
+	  fm["button"] << btn_quit;
+	  fm["button"] << btn_send;
+	  fm["box"] << tbox;
+ 	 fm.collocate();
+//	tbox.events().text_changed([&] (arg_textbox const& ev) {
+  //  auto& w = ev.widget;
+    //auto pos = w.caret_pos();
+  //   });
+
+  //Show the form
+ 	 fm.show();
+
+  //Start to event loop process, it blocks until the form is closed.
+ 	 exec();
+
 	while(true) {
 		std::cout << "Enter mess: ";
 		std::getline(std::cin, ans);
