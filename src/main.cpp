@@ -2,7 +2,8 @@
 #include <breep/util/serialization.hpp>
 #include <nana/gui.hpp>
 #include <nana/gui/widgets/label.hpp>
-
+#include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/textbox.hpp>
 
 #include <string>
 #include <iostream>
@@ -190,6 +191,45 @@ private:
 
 int main(int argc, char* argv[]) {
 
+	  using namespace nana;
+
+  //Define a form.
+	  form fm;
+
+  //Define a label and display a text.
+  	label lab{ fm, "Hello, <bold blue size=16>Nana C++ Library</>" };
+ 	 label lab2{ fm, "!" };
+ 	 lab.format(true);
+
+  //Define a button and answer the click event.
+ 	 button btn{ fm, "Quit" };
+ 	 btn.events().click([&fm] {
+// network.disconnect();
+	 fm.close();
+  	});
+
+	  textbox tbox{fm, true};
+
+  //Layout management
+  	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+ 	 fm["text"] << lab << lab2;
+	  fm["button"] << btn;
+	  fm["box"] << tbox;
+ 	 fm.collocate();
+	tbox.events().text_changed([&] (arg_textbox const& ev) {
+    auto& w = ev.widget;
+    auto pos = w.caret_pos();
+     });
+
+  //Show the form
+ 	 fm.show();
+
+  //Start to event loop process, it blocks until the form is closed.
+ 	 exec();
+
+	
+    
+
 	if (argc != 2 && argc != 4) {
 		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
 		return 1;
@@ -234,20 +274,12 @@ int main(int argc, char* argv[]) {
 	while(true) {
 		std::cout << "Enter mess: ";
 		std::getline(std::cin, ans);
-		using namespace nana;
-	
-		form fm;
-		label lb{  fm, rectangle{  10 , 10 , 100 , 100  }  };
-		lb.caption(ans);
- 	
-		fm.show( );
-
-		exec();
-
 		if (ans[0] == '/') {
 			if (ans == "/q") {
 				// Good bye !
+				
 				network.disconnect();
+				
 				break;
 			} else if (ans.substr(0,7) == "/square") {
 				// Here is a square for the peers
