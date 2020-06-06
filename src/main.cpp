@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 
+bool g_accept;
 
 /* This class will be sent through the network */
 class square {
@@ -252,7 +253,14 @@ int main(int argc, char* argv[]) {
 	 fm.close();
   	});
 	button btn_send{ fm, "send" };
-	 std::string ans;
+	g_accept = false;
+	btn_send.events().click([&fm] {
+// network.disconnect();
+	g_accept = true;
+	 fm.close();
+  	});
+	std::string ans;
+
  	 //btn_send.events(ans).click([&fm] {
 // network.disconnect();
 	//network.send_object(chat_message<std::string>(ans));
@@ -278,7 +286,7 @@ int main(int argc, char* argv[]) {
   //Start to event loop process, it blocks until the form is closed.
  	 exec();
 
-	while(true) {
+	//while(true) {
 		std::cout << "Enter mess: ";
 		std::getline(std::cin, ans);
 		if (ans[0] == '/') {
@@ -287,7 +295,7 @@ int main(int argc, char* argv[]) {
 				
 				network.disconnect();
 				
-				break;
+			//	break;
 			} else if (ans.substr(0,7) == "/square") {
 				// Here is a square for the peers
 				network.send_object(chat_message<square>(square(atoi(ans.data() + 8))));
@@ -304,7 +312,7 @@ int main(int argc, char* argv[]) {
 			// Here is a message for the peers
 			network.send_object(chat_message<std::string>(ans));
 		}
-	}
+	//}
 
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
