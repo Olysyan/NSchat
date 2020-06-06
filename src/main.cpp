@@ -192,38 +192,33 @@ private:
 
 int main(int argc, char* argv[]) {
 
-
-	
-    
-
-	if (argc != 2 && argc != 4) {
-		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
-		return 1;
-	}
-
 	std::string name;
 		nana::form fo;
         nana::textbox usr  {fo},   
-                pswd {fo};
+                port {fo};
         nana::button  login {fo, "Login"}, 
                 cancel{fo, "Cancel"};
         usr.tip_string("User:"    ).multi_lines(false);
-        pswd.tip_string("Password:").multi_lines(false).mask('*');
+        port.tip_string("Port:"   ).multi_lines(false);
                 // Define a place for the form.
         nana::place plc {fo};
                 // Divide the form into fields
-        login.events().click([&login, &fo, &name, &usr] {
+        login.events().click([&login, &fo, &name, &usr, &port, &argv]{
 // network.disconnect();
        name = usr.text();
-        
-
+	   std::string str = port.text();
+       char *cstr = new char[str.length() + 1];
+       strcpy(cstr, str.c_str());
+	   argv[1] = cstr;
 	    fo.close();
   	});
+
+
         //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
         plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
         //Insert widgets
         //The field textboxs is vertical, it automatically adjusts the widgets' top and height. 
-        plc.field("textboxs")<< usr  << pswd ;
+        plc.field("textboxs")<< usr  << port ;
         plc.field("buttons") <<login << cancel;
         // Finially, the widgets should be collocated.
         // Do not miss this line, otherwise the widgets are not collocated
@@ -231,7 +226,10 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         fo.show();
         nana::exec();
-
+ 	if (argc != 2 && argc != 4) {
+		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
+		return 1;
+	}
 
   //Start to event loop process, it blocks until the form is closed.
 
@@ -251,13 +249,6 @@ int main(int argc, char* argv[]) {
 	network.set_unlistened_type_listener([](breep::tcp::network&,const breep::tcp::peer&,breep::deserializer&,bool,uint64_t) -> void {
 		std::cout << "Unlistened class received." << std::endl;
 	});
-
-	std::cout << "Commands: /q to quit, /square <size> to send a rectangle, and /packet to send a packet with several things\n";
-	std::cout << "Starting..." << std::endl;
-
-
-
-
 
 	if (argc == 2) {
 		// runs the network in another thread.
