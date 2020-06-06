@@ -202,8 +202,41 @@ int main(int argc, char* argv[]) {
 	}
 
 	std::string name;
-	std::cout << "Enter a name: ";
-	std::cin >> name;
+		nana::form fo;
+        nana::textbox usr  {fo},   
+                pswd {fo};
+        nana::button  login {fo, "Login"}, 
+                cancel{fo, "Cancel"};
+        usr.tip_string("User:"    ).multi_lines(false);
+        pswd.tip_string("Password:").multi_lines(false).mask('*');
+                // Define a place for the form.
+        nana::place plc {fo};
+                // Divide the form into fields
+        login.events().click([&login, &fo, &name, &usr] {
+// network.disconnect();
+       name = usr.text();
+        
+
+	    fo.close();
+  	});
+        //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
+        plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
+        //Insert widgets
+        //The field textboxs is vertical, it automatically adjusts the widgets' top and height. 
+        plc.field("textboxs")<< usr  << pswd ;
+        plc.field("buttons") <<login << cancel;
+        // Finially, the widgets should be collocated.
+        // Do not miss this line, otherwise the widgets are not collocated
+        // until the form is resized.
+        plc.collocate();
+        fo.show();
+        nana::exec();
+
+
+  //Start to event loop process, it blocks until the form is closed.
+
+
+
 
 	/*              we will be listening on port given as first parameter -v */
 	breep::tcp::network network(static_cast<unsigned short>(std::atoi(argv[1])));
@@ -221,6 +254,11 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Commands: /q to quit, /square <size> to send a rectangle, and /packet to send a packet with several things\n";
 	std::cout << "Starting..." << std::endl;
+
+
+
+
+
 	if (argc == 2) {
 		// runs the network in another thread.
 		network.awake();
@@ -253,10 +291,10 @@ int main(int argc, char* argv[]) {
 	 fm.close();
   	});
 	button btn_send{ fm, "send" };
-	g_accept = false;
+
 	btn_send.events().click([&fm] {
 // network.disconnect();
-	g_accept = true;
+
 	 fm.close();
   	});
 	std::string ans;
