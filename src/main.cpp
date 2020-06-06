@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
        char *cstr = new char[str.length() + 1];
        strcpy(cstr, str.c_str());
 	   argv[1] = cstr;
-	    fo.close();
+	   fo.close();
   	});
 
 
@@ -226,8 +226,15 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         fo.show();
         nana::exec();
- 	if (argc != 2 && argc != 4) {
-		std::cout << "Usage: " << argv[0] << " <hosting port> [<target ip> <target port>]" << std::endl;
+ 	if (argv[1] !="" && argc != 4) {
+		nana::form fc;
+		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
+		lab1488.format(true);
+		fc.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+		fc["text"] << lab1488;
+		fc.show();
+        nana::exec();
+		
 		return 1;
 	}
 
@@ -264,7 +271,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	std::cin.ignore();
+
 		  using namespace nana;
 
   //Define a form.
@@ -316,7 +323,7 @@ int main(int argc, char* argv[]) {
  	 exec();
 
 	//while(true) {
-		std::cout << "Enter mess: ";
+
 		std::getline(std::cin, ans);
 		if (ans[0] == '/') {
 			if (ans == "/q") {
