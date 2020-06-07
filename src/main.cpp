@@ -192,24 +192,36 @@ private:
 
 int main(int argc, char* argv[]) {
     std::string str;
+	std::string str1;
 	std::string name;
+	std::string str2;
 	do{
 		nana::form fo;
         nana::textbox usr  {fo},   
-                port {fo};
+                port {fo},
+				target_ip {fo},
+				target_port {fo};
         nana::button  login {fo, "Login"}, 
                 cancel{fo, "Cancel"};
         usr.tip_string("User:"    ).multi_lines(false);
         port.tip_string("Port:"   ).multi_lines(false);
+		target_ip.tip_string("Target ip:"    ).multi_lines(false);
+		target_port.tip_string("Target port:"    ).multi_lines(false);
                 // Define a place for the form.
         nana::place plc {fo};
                 // Divide the form into fields
-        login.events().click([&login, &fo, &name, &usr, &port, &argv, &plc, &str]{
+        login.events().click([&login, &fo, &name, &usr, &port, &argv, &str1, &str, &target_ip,&target_port,&str2]{
        
        name = usr.text();
 	   str = port.text();
        char* chr = strdup(str.c_str());
 	   argv[1] = chr;
+	   str1 = target_ip.text();
+       char* chr1 = strdup(str1.c_str());
+	   argv[2] = chr1;
+	   str2 = target_port.text();
+       char* chr2 = strdup(str2.c_str());
+	   argv[3] = chr2;
 	   fo.close();
   	});
 
@@ -217,7 +229,7 @@ int main(int argc, char* argv[]) {
         plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
         //Insert widgets
         //The field textboxs is vertical, it automatically adjusts the widgets' top and height. 
-        plc.field("textboxs")<< usr  << port ;
+        plc.field("textboxs")<< usr  << port << target_ip <<target_port;
         plc.field("buttons") <<login << cancel;
         // Finially, the widgets should be collocated.
         // Do not miss this line, otherwise the widgets are not collocated
@@ -225,8 +237,8 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         fo.show();
         nana::exec();
-	}while(name == "" || str == "");
-	
+	}while((name == "" || str == "") || ((str1 == "") != (str2 == "")));
+
  	if (argc != 4 && argc != 2) {
 		nana::form fc;
 		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
