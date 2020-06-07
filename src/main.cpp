@@ -7,7 +7,8 @@
 
 #include <string>
 #include <iostream>
-
+bool flag = true;
+std::string ans;
 bool g_accept = false;
 bool g_accept1 = false;
 /* This class will be sent through the network */
@@ -261,7 +262,7 @@ int main(int argc, char* argv[]) {
         fo.show();
         nana::exec();
 	}while((name == "" || str == "") || ((str1 == "") != (str2 == "")));
-	
+
  	if (argc != 4 && argc != 2) {
 		nana::form fc;
 		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
@@ -310,7 +311,8 @@ int main(int argc, char* argv[]) {
 
 	
   //Define a form.
-  	bool g_exit = true;
+  	bool g_exit = false;
+	while(flag){
 	do
 	{
 		nana::form yy;
@@ -322,15 +324,16 @@ int main(int argc, char* argv[]) {
                 // Define a place for the form.
         nana::place plc {yy};
                 // Divide the form into fields
-		std::string ans = "";
-        send_mess.events().click([&send_mess, &yy, &name,&ans, &mess, &network]{
+
+        send_mess.events().click([&yy, &mess]{
 
 		ans  = mess.text();
-        network.send_object(chat_message<std::string>(ans));
-       //
-	    yy.close();
+        yy.close();
+	    
   	});
-	   cancel1.events().click([&yy]{
+   
+	   cancel1.events().click([&yy,&network]{
+		   network.disconnect();
 		   yy.close();
 		   g_accept1 = true;
 	   });
@@ -351,8 +354,13 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         yy.show();
         nana::exec();
-	
+
 	}while(g_exit);
+	 if(ans != ""){
+	  network.send_object(chat_message<std::string>(ans));
+	  ans = "";
+	  }
+	}
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
 	return 0;
