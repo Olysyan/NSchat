@@ -321,19 +321,10 @@ int main(int argc, char* argv[]) {
 	btn_send.events().click([&fm, &ans, &network, &tbox] 
 	{
 	ans = tbox.text();
-		if (ans[0] == '/') {
-			if (ans == "/q") {
+	std::cout << ans;
+	network.send_object(chat_message<std::string>(ans));
+	tbox.text() = "";
 
-				network.disconnect();
-				fm.close();
-	
-		} else {
-			// Here is a message for the peers
-			network.send_object(chat_message<std::string>(ans));
-			tbox.text() = "";
-		}
-
-		}
   	});
 	exec();
 	//}
