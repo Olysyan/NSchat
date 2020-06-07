@@ -9,7 +9,7 @@
 #include <iostream>
 
 bool g_accept = false;
-
+bool g_accept1 = false;
 /* This class will be sent through the network */
 class square {
 public:
@@ -308,43 +308,49 @@ int main(int argc, char* argv[]) {
 	}
 
 
-		  using namespace nana;
-
+	
   //Define a form.
   	bool g_exit = true;
 	do
 	{
+		nana::form yy;
+        nana::textbox mess  {yy};   
 
-	form fm;
-  	label lab{ fm, "Hello, <bold blue size=16>NS!</>" };
- 	label lab2{ fm, "Enter mess: " };
-	label text_label1{fm, "1"};
- 	lab.format(true);
- 	button btn_quit{ fm, "Quit" };
- 	btn_quit.events().click([&fm] {
-	fm.close();
+        nana::button  send_mess {yy, "send"}, 
+                cancel1 {yy, "Cancel"};
+        mess.tip_string("Enter mess:"    ).multi_lines(false);
+                // Define a place for the form.
+        nana::place plc {yy};
+                // Divide the form into fields
+		std::string ans = "";
+        send_mess.events().click([&send_mess, &yy, &name,&ans, &mess, &network]{
+
+		ans  = mess.text();
+        network.send_object(chat_message<std::string>(ans));
+       
+	    yy.close();
   	});
-	button btn_send{ fm, "send" };
-	std::string ans;
-	textbox tbox{fm, true};
-	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
- 	fm["text"] << lab << lab2;
-	fm["button"] << btn_quit;
-	fm["button"] << btn_send;
-	fm["box"] << tbox;
- 	
- 	
-	btn_send.events().click([&fm, &ans, &network, &tbox] 
-	{
-	ans = tbox.text();
-	network.send_object(chat_message<std::string>(ans));
-	tbox.text() = "";
-	fm.close();
-  	});
-	//}
-    fm.collocate();
-	fm.show();
-	exec();
+	   cancel1.events().click([&yy]{
+		   yy.close();
+		   g_accept1 = true;
+	   });
+	if(g_accept1){
+		return 1;
+	}
+
+
+        //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
+        plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
+        //Insert widgets
+        //The field textboxs is vertical, it automatically adjusts the widgets' top and height. 
+        plc.field("textboxs")<< mess;
+        plc.field("buttons") << send_mess << cancel1;
+        // Finially, the widgets should be collocated.
+        // Do not miss this line, otherwise the widgets are not collocated
+        // until the form is resized.
+        plc.collocate();
+        yy.show();
+        nana::exec();
 	
 	}while(g_exit);
 	// we'll remove any listeners (useless here, as we're going out of scope.
