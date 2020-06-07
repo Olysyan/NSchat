@@ -8,7 +8,7 @@
 #include <string>
 #include <iostream>
 
-bool g_accept;
+bool g_accept = false;
 
 /* This class will be sent through the network */
 class square {
@@ -224,6 +224,14 @@ int main(int argc, char* argv[]) {
 	   argv[3] = chr2;
 	   fo.close();
   	});
+	   cancel.events().click([&fo]{
+		   fo.close();
+		   g_accept = true;
+	   });
+	if(g_accept){
+		return 1;
+	}
+
 
         //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
         plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
@@ -238,7 +246,7 @@ int main(int argc, char* argv[]) {
         fo.show();
         nana::exec();
 	}while((name == "" || str == "") || ((str1 == "") != (str2 == "")));
-
+	
  	if (argc != 4 && argc != 2) {
 		nana::form fc;
 		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
@@ -318,26 +326,14 @@ int main(int argc, char* argv[]) {
 
 				network.disconnect();
 				fm.close();
-			//	break;
-			} else if (ans.substr(0,7) == "/square") {
-				// Here is a square for the peers
-				network.send_object(chat_message<square>(square(atoi(ans.data() + 8))));
-			} else if (ans.substr(0,7) == "/packet"){
-				// Just to demonstrate the usage of breep::packet
-				using str = chat_message<std::string>;
-				breep::packet p;
-				p << str("pa") << str("ck") << str("et") << chat_message<square>(square(25)) << 3.1415;
-				network.send_packet(p);
-			} else {
-				std::cout << "Unknown command: " << ans << std::endl;
-			}
+	
 		} else {
 			// Here is a message for the peers
 			network.send_object(chat_message<std::string>(ans));
 			tbox.text() = "";
 		}
 
-
+		}
   	});
 	exec();
 	//}
