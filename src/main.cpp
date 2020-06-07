@@ -280,7 +280,7 @@ int main(int argc, char* argv[]) {
 
 
 	/*              we will be listening on port given as first parameter -v */
-	breep::tcp::network network(static_cast<unsigned short>(std::atoi(argv[1])));
+	breep::tcp::network network(static_cast<unsigned short>(std::stoi(argv[1])));
 
 	// Disabling all logs (set to 'warning' by default).
 	network.set_log_level(breep::log_level::none);
@@ -325,7 +325,7 @@ int main(int argc, char* argv[]) {
 		std::string ans = "";
         send_mess.events().click([&send_mess, &yy, &name,&ans, &mess, &network]{
 
-		ans  = mess.text();
+		ans  = std::string(mess.text());
         network.send_object(chat_message<std::string>(ans));
        //
 	    yy.close();
