@@ -191,7 +191,7 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-
+    argv[1] = "";
 	std::string name;
 		nana::form fo;
         nana::textbox usr  {fo},   
@@ -226,7 +226,8 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         fo.show();
         nana::exec();
- 	if (argv[1] !="" && argc != 4) {
+	
+ 	if (argc != 4 && argc != 2) {
 		nana::form fc;
 		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
 		lab1488.format(true);
