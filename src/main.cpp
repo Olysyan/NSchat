@@ -326,11 +326,11 @@ int main(int argc, char* argv[]) {
 	tbox.text() = "";
 
   	});
-	exec();
 	//}
 
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
 	}
+	exec();
 	return 0;
 }
