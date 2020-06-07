@@ -327,7 +327,7 @@ int main(int argc, char* argv[]) {
 
 		ans  = mess.text();
         network.send_object(chat_message<std::string>(ans));
-       
+       //
 	    yy.close();
   	});
 	   cancel1.events().click([&yy]{
