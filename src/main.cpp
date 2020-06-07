@@ -191,8 +191,9 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-    argv[1] = "";
+    std::string str;
 	std::string name;
+	do{
 		nana::form fo;
         nana::textbox usr  {fo},   
                 port {fo};
@@ -203,16 +204,14 @@ int main(int argc, char* argv[]) {
                 // Define a place for the form.
         nana::place plc {fo};
                 // Divide the form into fields
-        login.events().click([&login, &fo, &name, &usr, &port, &argv]{
-// network.disconnect();
+        login.events().click([&login, &fo, &name, &usr, &port, &argv, &plc, &str]{
+       
        name = usr.text();
-	   std::string str = port.text();
-       char *cstr = new char[str.length() + 1];
-       strcpy(cstr, str.c_str());
-	   argv[1] = cstr;
+	   str = port.text();
+       char* chr = strdup(str.c_str());
+	   argv[1] = chr;
 	   fo.close();
   	});
-
 
         //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
         plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
@@ -226,6 +225,7 @@ int main(int argc, char* argv[]) {
         plc.collocate();
         fo.show();
         nana::exec();
+	}while(name == "" || str == "");
 	
  	if (argc != 4 && argc != 2) {
 		nana::form fc;
