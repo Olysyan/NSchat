@@ -173,7 +173,22 @@ public:
 
 	void string_received(breep::tcp::netdata_wrapper<chat_message<std::string>>& dw) {
 		// Someone sent you a nice little message.
-		std::cout << peer_map.at(dw.source.id()) << ": " << dw.data.message() << std::endl;
+		//std::cout << peer_map.at(dw.source.id()) << ": " << dw.data.message() << std::endl;
+
+		using namespace nana;
+		form tt;
+		nana::label lab00{ tt,  peer_map.at(dw.source.id()) };
+		nana::label lab0{ tt,  dw.data.message() };
+		lab0.format(true);
+		lab00.format(true);
+		tt.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+		tt["text"] << lab0<<lab00;
+		tt.show();
+        nana::exec();
+
+
+
+
 	}
 
 	void operator()(breep::tcp::netdata_wrapper<name>& dw) {
