@@ -317,18 +317,20 @@ int main(int argc, char* argv[]) {
 	fm["button"] << btn_quit;
 	fm["button"] << btn_send;
 	fm["box"] << tbox;
- 	fm.collocate();
- 	fm.show();
+ 	
+ 	
 	btn_send.events().click([&fm, &ans, &network, &tbox] 
 	{
 	ans = tbox.text();
-	std::cout << ans;
 	network.send_object(chat_message<std::string>(ans));
 	tbox.text() = "";
-
+	fm.close();
   	});
 	//}
+    fm.collocate();
+	fm.show();
 	exec();
+	
 	}while(g_exit);
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
