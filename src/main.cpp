@@ -296,7 +296,8 @@ int main(int argc, char* argv[]) {
 		  using namespace nana;
 
   //Define a form.
-	while(true)
+  	bool g_exit = true;
+	do
 	{
 
 	form fm;
@@ -327,10 +328,9 @@ int main(int argc, char* argv[]) {
 
   	});
 	//}
-
+	exec();
+	}while(g_exit);
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
-	}
-	exec();
 	return 0;
 }
