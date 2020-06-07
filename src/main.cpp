@@ -288,62 +288,36 @@ int main(int argc, char* argv[]) {
 		  using namespace nana;
 
   //Define a form.
-	  form fm;
-  
-  //Define a label and display a text.
-  	label lab{ fm, "Hello, <bold blue size=16>NS!</>" };
- 	 label lab2{ fm, "Enter mess: " };
- 	 lab.format(true);
+	while(true)
+	{
 
-  //Define a button and answer the click event.
- 	 button btn_quit{ fm, "Quit" };
- 	 btn_quit.events().click([&fm] {
-// network.disconnect();
-	 fm.close();
+	form fm;
+  	label lab{ fm, "Hello, <bold blue size=16>NS!</>" };
+ 	label lab2{ fm, "Enter mess: " };
+	label text_label1{fm, "1"};
+ 	lab.format(true);
+ 	button btn_quit{ fm, "Quit" };
+ 	btn_quit.events().click([&fm] {
+	fm.close();
   	});
 	button btn_send{ fm, "send" };
-
-	btn_send.events().click([&fm] {
-// network.disconnect();
-
-	 fm.close();
-  	});
 	std::string ans;
-
- 	 //btn_send.events(ans).click([&fm] {
-// network.disconnect();
-	//network.send_object(chat_message<std::string>(ans));
-
-  //	});
-	  textbox tbox{fm, true};
-
-  //Layout management
-  	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
- 	 fm["text"] << lab << lab2;
-	  fm["button"] << btn_quit;
-	  fm["button"] << btn_send;
-	  fm["box"] << tbox;
- 	 fm.collocate();
-//	tbox.events().text_changed([&] (arg_textbox const& ev) {
-  //  auto& w = ev.widget;
-    //auto pos = w.caret_pos();
-  //   });
-
-  //Show the form
- 	 fm.show();
-
-  //Start to event loop process, it blocks until the form is closed.
- 	 exec();
-
-	//while(true) {
-
-		std::getline(std::cin, ans);
+	textbox tbox{fm, true};
+	fm.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+ 	fm["text"] << lab << lab2;
+	fm["button"] << btn_quit;
+	fm["button"] << btn_send;
+	fm["box"] << tbox;
+ 	fm.collocate();
+ 	fm.show();
+	btn_send.events().click([&fm, &ans, &network, &tbox] 
+	{
+	ans = tbox.text();
 		if (ans[0] == '/') {
 			if (ans == "/q") {
-				// Good bye !
-				
+
 				network.disconnect();
-				
+				fm.close();
 			//	break;
 			} else if (ans.substr(0,7) == "/square") {
 				// Here is a square for the peers
@@ -360,10 +334,16 @@ int main(int argc, char* argv[]) {
 		} else {
 			// Here is a message for the peers
 			network.send_object(chat_message<std::string>(ans));
+			tbox.text() = "";
 		}
+
+
+  	});
+	exec();
 	//}
 
 	// we'll remove any listeners (useless here, as we're going out of scope.
 	network.clear_any();
+	}
 	return 0;
 }
