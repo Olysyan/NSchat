@@ -4,7 +4,6 @@
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/textbox.hpp>
-<<<<<<< HEAD
 #include <string>
 #include <iostream>
 bool flag = true;
@@ -285,6 +284,3 @@ int main(int argc, char* argv[]) {
 	network.clear_any();
 	return 0;
 }
-=======
-
->>>>>>> 54ada369b81faa2453f3434dfcfd54728b1d35e4
