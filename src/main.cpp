@@ -4,38 +4,12 @@
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/textbox.hpp>
-
 #include <string>
 #include <iostream>
 bool flag = true;
 std::string ans;
 bool g_accept = false;
 bool g_accept1 = false;
-/* This class will be sent through the network */
-class square {
-public:
-	/* Default constructor is required by serialization. */
-	square(): m_height(0), m_width(0) {}
-	explicit square(int height): m_height(height), m_width(2 * height) {}
-	square(int height, int width): m_height(height), m_width(width) {}
-
-	int height() const {
-		return m_height;
-	}
-
-	int width() const {
-		return m_width;
-	}
-
-private:
-	int m_height;
-	int m_width;
-	// enabling de/serialization for the square class.
-	BREEP_ENABLE_SERIALIZATION(square, m_width, m_height)
-};
-
-/* This is just a container class that is not of much use, but that is here to demonstrate the
- * use of template class with the network. */
 template <typename T>
 class chat_message {
 public:
@@ -89,7 +63,7 @@ BREEP_DECLARE_TEMPLATE(chat_message)
 /* We need to declare these two types because they will be used as
  * template parameter of chat_message. */
 BREEP_DECLARE_TYPE(std::string)
-BREEP_DECLARE_TYPE(square)
+
 
 class chat_room {
 public:
@@ -117,11 +91,7 @@ public:
 			                this->string_received(dw);
 		                }));
 
-		m_ids.push_back(net.add_data_listener<chat_message<square>>(
-				// The netdata_wrapper structure holds some nice infos. read the doc! :p
-				[this] (breep::tcp::netdata_wrapper<chat_message<square>>& dw) -> void {
-					this->square_received(dw);
-				}));
+		
 	}
 
 	void stop_listening(breep::tcp::network& net) {
@@ -144,52 +114,23 @@ public:
 			peer_map.erase(peer.id());
 		}
 	}
-
-	void square_received(breep::tcp::netdata_wrapper<chat_message<square>>& dw) {
-		// We received a square ! Let's draw it.
-		int height = dw.data.message().height();
-		int width  = dw.data.message().width();
-
-		std::cout << peer_map.at(dw.source.id()) << ":\n";
-
-		std::cout << "\t#";
-		for (int i{2} ; i < width ; ++i) {
-			std::cout << "-";
-		}
-		std::cout << "#\n";
-		for (int i{2} ; i < height ; ++i) {
-			std::cout << "\t|";
-			for (int j{2} ; j < width ; ++j) {
-				std::cout << ' ';
-			}
-			std::cout << "|\n";
-		}
-
-		std::cout << "\t#";
-		for (int i{2} ; i < width ; ++i) {
-			std::cout << "-";
-		}
-		std::cout << "#\n";
-	}
-
 	void string_received(breep::tcp::netdata_wrapper<chat_message<std::string>>& dw) {
 		// Someone sent you a nice little message.
 		//std::cout << peer_map.at(dw.source.id()) << ": " << dw.data.message() << std::endl;
 
 		using namespace nana;
 		form tt;
+		tt.caption("NSchat");
+		nana::place pl(tt);
 		nana::label lab00{ tt,  peer_map.at(dw.source.id()) };
 		nana::label lab0{ tt,  dw.data.message() };
 		lab0.format(true);
 		lab00.format(true);
-		tt.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
+		tt.div( "<vertical text>");
 		tt["text"] << lab0<<lab00;
+		pl.collocate();
 		tt.show();
         nana::exec();
-
-
-
-
 	}
 
 	void operator()(breep::tcp::netdata_wrapper<name>& dw) {
@@ -213,6 +154,7 @@ int main(int argc, char* argv[]) {
 	std::string str2;
 	do{
 		nana::form fo;
+		fo.caption("NSchat");
         nana::textbox usr  {fo},   
                 port {fo},
 				target_ip {fo},
@@ -230,14 +172,8 @@ int main(int argc, char* argv[]) {
        
        name = usr.text();
 	   str = port.text();
-       char* chr = strdup(str.c_str());
-	   argv[1] = chr;
 	   str1 = target_ip.text();
-       char* chr1 = strdup(str1.c_str());
-	   argv[2] = chr1;
 	   str2 = target_port.text();
-       char* chr2 = strdup(str2.c_str());
-	   argv[3] = chr2;
 	   fo.close();
   	});
 	   cancel.events().click([&fo]{
@@ -263,25 +199,10 @@ int main(int argc, char* argv[]) {
         nana::exec();
 	}while((name == "" || str == "") || ((str1 == "") != (str2 == "")));
 
- 	if (argc != 4 && argc != 2) {
-		nana::form fc;
-		nana::label lab1488{ fc, "Введите <bold blue size=16>порт!</>" };
-		lab1488.format(true);
-		fc.div(R"(vert <><<><weight=80% arrange=[variable,20%] text><>><box> <weight=24<><button><>><>)");
-		fc["text"] << lab1488;
-		fc.show();
-        nana::exec();
-		
-		return 1;
-	}
-
   //Start to event loop process, it blocks until the form is closed.
 
-
-
-
 	/*              we will be listening on port given as first parameter -v */
-	breep::tcp::network network(static_cast<unsigned short>(std::atoi(argv[1])));
+	breep::tcp::network network(static_cast<unsigned short>(std::stoi(str)));
 
 	// Disabling all logs (set to 'warning' by default).
 	network.set_log_level(breep::log_level::none);
@@ -294,13 +215,13 @@ int main(int argc, char* argv[]) {
 		std::cout << "Unlistened class received." << std::endl;
 	});
 
-	if (argc == 2) {
+	if ((str1 == "") && (str2 == "")) {
 		// runs the network in another thread.
 		network.awake();
 	} else {
 		// let's try to connect to a buddy at address argv[2] and port argv[3]
-		boost::asio::ip::address address = boost::asio::ip::address::from_string(argv[2]);
-		auto val =static_cast<unsigned short>(atoi(argv[3])); 
+		boost::asio::ip::address address = boost::asio::ip::address::from_string(str1);
+		auto val =static_cast<unsigned short>(stoi(str2)); 
         if(!network.connect(address, val)) { 
 			// oh noes, it failed!
 			std::cout << "Connection failed." << std::endl;
@@ -308,14 +229,13 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-
-	
   //Define a form.
   	bool g_exit = false;
 	while(flag){
 	do
 	{
 		nana::form yy;
+		yy.caption("NSchat");
         nana::textbox mess  {yy};   
 
         nana::button  send_mess {yy, "send"}, 
@@ -340,7 +260,6 @@ int main(int argc, char* argv[]) {
 	if(g_accept1){
 		return 1;
 	}
-
 
         //plc.div("margin= 10%   gap=20 vertical< weight=70 gap=20 vertical textboxs arrange=[25,25]> <min=20> <weight=25 gap=10 buttons>  > ");
         plc.div("<><weight=80% vertical<><weight=70% vertical <vertical gap=10 textboxs arrange=[25,25]>  <weight=25 gap=10 buttons> ><>><>");
