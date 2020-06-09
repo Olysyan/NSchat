@@ -4,7 +4,7 @@
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/textbox.hpp>
-<<<<<<< HEAD
+
 #include <string>
 #include <iostream>
 bool flag = true;
@@ -111,7 +111,20 @@ public:
 			network.send_object_to(peer, m_name);
 		} else {
 			// (s)he left :/
-			std::cout << peer_map.at(peer.id()) << " disconnected." << std::endl;
+			//std::cout << peer_map.at(peer.id()) << " disconnected." << std::endl;
+			using namespace nana;
+		form tp;
+		tp.caption("NSchat");
+		nana::place pl(tp);
+		nana::label lab_11{ tp,   peer_map.at(peer.id()) };
+		nana::label lab_22{ tp,  " disconnected." };
+		lab_11.format(true);
+		lab_22.format(true);
+		tp.div( "<vertical text>");
+		tp["text"] << lab_11<<lab_22;
+		pl.collocate();
+		tp.show();
+        nana::exec();
 			peer_map.erase(peer.id());
 		}
 	}
@@ -136,7 +149,20 @@ public:
 
 	void operator()(breep::tcp::netdata_wrapper<name>& dw) {
 		// The guy to whom we just connected sent us his/her name.
-		std::cout << dw.data.value << " connected." << std::endl;
+		//std::cout << dw.data.value << " connected." << std::endl;
+		using namespace nana;
+		form ta;
+		ta.caption("NSchat");
+		nana::place pl(ta);
+		nana::label lab_1{ ta,   dw.data.value };
+		nana::label lab_2{ ta,  " connected." };
+		lab_1.format(true);
+		lab_2.format(true);
+		ta.div( "<vertical text>");
+		ta["text"] << lab_1<<lab_2;
+		pl.collocate();
+		ta.show();
+        nana::exec();
 		peer_map.insert(std::make_pair(dw.source.id(), dw.data.value));
 	}
 
@@ -285,6 +311,3 @@ int main(int argc, char* argv[]) {
 	network.clear_any();
 	return 0;
 }
-=======
-
->>>>>>> 54ada369b81faa2453f3434dfcfd54728b1d35e4
