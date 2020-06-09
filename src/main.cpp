@@ -120,7 +120,7 @@ public:
 		nana::label lab_22{ tp,  " disconnected." };
 		lab_11.format(true);
 		lab_22.format(true);
-		tp.div( "<vertical text>");
+		tp.div( "<vfit=200 vertical text>");
 		tp["text"] << lab_11<<lab_22;
 		pl.collocate();
 		tp.show();
@@ -140,7 +140,7 @@ public:
 		nana::label lab0{ tt,  dw.data.message() };
 		lab0.format(true);
 		lab00.format(true);
-		tt.div( "<vertical text>");
+		tt.div( "<vfit=200 vertical text>");
 		tt["text"] << lab0<<lab00;
 		pl.collocate();
 		tt.show();
@@ -158,7 +158,7 @@ public:
 		nana::label lab_2{ ta,  " connected." };
 		lab_1.format(true);
 		lab_2.format(true);
-		ta.div( "<vertical text>");
+		ta.div( "<vfit=200 vertical text>");
 		ta["text"] << lab_1<<lab_2;
 		pl.collocate();
 		ta.show();
