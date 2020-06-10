@@ -6,7 +6,7 @@
 #include <nana/gui/widgets/button.hpp>
 #include <nana/gui/widgets/label.hpp>
 #include <nana/gui/widgets/textbox.hpp>
-#include <catch2/catch.hpp>
+
 
 #include <iostream>
 #include <string>
